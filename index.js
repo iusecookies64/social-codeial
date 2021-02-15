@@ -12,12 +12,12 @@ app.set("views", "./views");
 
 // putting all the middleWares
 app.use(express.urlencoded());
-app.use(express.static());
-app.use(cookieParser);
+app.use(express.static("assets"));
+app.use(cookieParser());
 app.use(ejsLayouts);
 
 // setting up router below
-app.use("/", "./routers/index");
+app.use("/", require("./routers/index"));
 
 // listening our server
 app.listen(port, function (err) {
