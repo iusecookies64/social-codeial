@@ -1,0 +1,20 @@
+{
+  "name": "codeial",
+  "version": "1.0.0",
+  "description": "A website where there is nothing toxic only true socialism",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tushar Raghav",
+  "license": "ISC",
+  "dependencies": {
+    "cookie-parser": "^1.4.5",
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "express-ejs-layouts": "^2.5.0",
+    "mongoose": "^5.11.16",
+    "nodemon": "^2.0.7"
+  }
+}
