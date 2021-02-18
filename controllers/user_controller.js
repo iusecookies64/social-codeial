@@ -3,6 +3,9 @@ const User = require("../models/user");
 
 // rendering sign up page
 module.exports.signUp = function (req, res) {
+  if (req.isAuthenticated()) {
+    return res.redirect("/user/profile");
+  }
   res.render("sign_up", {
     title: "Codeial : Sign Up",
   });
@@ -13,6 +16,9 @@ module.exports.signUp = function (req, res) {
 
 // rendering sign in page
 module.exports.signIn = function (req, res) {
+  if (req.isAuthenticated()) {
+    return res.redirect("/user/profile");
+  }
   return res.render("sign-in", {
     title: "Codeial : Sign In",
   });
@@ -64,66 +70,90 @@ module.exports.create = function (req, res) {
   });
 };
 
-// ============================================================
-
-// processing sign in form post request
+// create session req action
 module.exports.createSession = function (req, res) {
-  // finding user in our db
-  User.findOne({ email: req.body.email }, function (err, user) {
-    if (err) {
-      console.log("Error finding user in sign in");
-      return res.redirect("back");
-    }
-    // in case user is found
-    if (user) {
-      // checking if password entered is correct
-      if (user.password == req.body.password) {
-        // creating a authentication key
-        res.cookie("user_id", user.id);
-        // redirection to /user/profile
-        return res.redirect("/user/profile");
-      }
-    } else {
-      // if user not found or password didn't match
-      return res.redirect("/user/sign-in");
-    }
-  });
+  console.log("createSession");
+  return res.redirect("/user/profile");
 };
 
-// ============================================================
-
-// handling /user/profile req
-
+// profile get req action
 module.exports.profile = function (req, res) {
-  console.log("cookie in profile", req.cookies);
-  // if user_id prop is present
-  if (req.cookies.user_id) {
-    // checking if such user if present
-    User.findById(req.cookies.user_id, function (err, user) {
-      if (err) {
-        console.log("error in finding user in profile");
-        return;
-      }
-      // if user is found rendering profile page
-      if (user) {
-        return res.render("profile", {
-          title: "Codeial : User Profile",
-          user: user,
-        });
-      } else {
-        return res.redirect("/user/sign-in");
-      }
+  if (req.isAuthenticated()) {
+    return res.render("profile", {
+      title: "Codeial : Profile",
     });
-  } else {
-    return res.redirect("/user/sign-in");
   }
-};
 
-// ============================================================
-
-// handling sign out req
-
-module.exports.signOut = function (req, res) {
-  delete req.cookies.user_id;
   return res.redirect("/user/sign-in");
 };
+
+module.exports.signOut = function (req, res) {
+  req.logout();
+  return res.redirect("/user/sign-in");
+};
+
+// ============================================================
+
+// // processing sign in form post request
+// module.exports.createSession = function (req, res) {
+//   // finding user in our db
+//   User.findOne({ email: req.body.email }, function (err, user) {
+//     if (err) {
+//       console.log("Error finding user in sign in");
+//       return res.redirect("back");
+//     }
+//     // in case user is found
+//     if (user) {
+//       // checking if password entered is correct
+//       if (user.password == req.body.password) {
+//         // creating a authentication key
+//         res.cookie("user_id", user.id);
+//         // redirection to /user/profile
+//         return res.redirect("/user/profile");
+//       } else {
+//         return res.redirect("/user/sign-in");
+//       }
+//     } else {
+//       // if user not found or password didn't match
+//       return res.redirect("/user/sign-in");
+//     }
+//   });
+// };
+
+// // ============================================================
+
+// // handling /user/profile req
+
+// module.exports.profile = function (req, res) {
+//   console.log("cookie in profile", req.cookies);
+//   // if user_id prop is present
+//   if (req.cookies.user_id) {
+//     // checking if such user if present
+//     User.findById(req.cookies.user_id, function (err, user) {
+//       if (err) {
+//         console.log("error in finding user in profile");
+//         return;
+//       }
+//       // if user is found rendering profile page
+//       if (user) {
+//         return res.render("profile", {
+//           title: "Codeial : User Profile",
+//           user: user,
+//         });
+//       } else {
+//         return res.redirect("/user/sign-in");
+//       }
+//     });
+//   } else {
+//     return res.redirect("/user/sign-in");
+//   }
+// };
+
+// // ============================================================
+
+// // handling sign out req
+
+// module.exports.signOut = function (req, res) {
+//   delete req.cookies.user_id;
+//   return res.redirect("/user/sign-in");
+// };
