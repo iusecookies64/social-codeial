@@ -1,5 +1,5 @@
 const express = require("express");
-const ejsLayouts = require("express-ejs-layouts");
+const expressLayouts = require("express-ejs-layouts");
 const cookieParser = require("cookie-parser");
 const db = require("./config/mongoose");
 
@@ -22,13 +22,14 @@ app.set("views", "./views");
 
 // parser middleWares
 app.use(express.urlencoded());
-app.use(express.static("assets"));
+app.use(express.static("./assets"));
 app.use(cookieParser());
 
 // ejs layouts
-app.use(ejsLayouts);
-app.set("layouts extractStyles", true);
-app.set("layouts extractScripts", true);
+app.use(expressLayouts);
+// extract style and scripts from sub pages into the layout
+app.set("layout extractStyles", true);
+app.set("layout extractScripts", true);
 
 // authentication middlewares
 app.use(

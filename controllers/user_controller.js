@@ -6,10 +6,10 @@ module.exports.signUp = function (req, res) {
   if (req.isAuthenticated()) {
     return res.redirect("/user/profile");
   }
-  res.render("sign_up", {
+
+  return res.render("sign_up", {
     title: "Codeial : Sign Up",
   });
-  return;
 };
 
 // ============================================================
@@ -26,7 +26,7 @@ module.exports.signIn = function (req, res) {
 
 // ============================================================
 
-// processing sign up form post request
+// processing sign up data
 module.exports.create = function (req, res) {
   // checking if password and confirm password is same
   if (req.body.password != req.body.confirm_password) {
@@ -56,10 +56,9 @@ module.exports.create = function (req, res) {
         },
         function (err, user) {
           if (err) {
-            console.log("error creating user in sign-up");
+            console.log("error creating user while signing-up");
             return res.redirect("/user/sign-up");
           }
-          console.log(user);
 
           // once user created redirect to sign in page
 
@@ -72,24 +71,19 @@ module.exports.create = function (req, res) {
 
 // create session req action
 module.exports.createSession = function (req, res) {
-  console.log("createSession");
   return res.redirect("/user/profile");
 };
 
 // profile get req action
 module.exports.profile = function (req, res) {
-  if (req.isAuthenticated()) {
-    return res.render("profile", {
-      title: "Codeial : Profile",
-    });
-  }
-
-  return res.redirect("/user/sign-in");
+  return res.render("profile", {
+    title: "Codeial : User Profile",
+  });
 };
 
 module.exports.signOut = function (req, res) {
   req.logout();
-  return res.redirect("/user/sign-in");
+  return res.redirect("/");
 };
 
 // ============================================================
