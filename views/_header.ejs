@@ -1,3 +1,31 @@
-<h1 style="display: inline-block">Codeial :</h1>
-&nbsp;&nbsp;
-<h3 style="display: inline-block">Where even code is social!</h3>
+<link rel="stylesheet" href="/css/header.css" />
+<link rel="preconnect" href="https://fonts.gstatic.com" />
+<link
+  href="https://fonts.googleapis.com/css2?family=Akaya+Telivigala&display=swap"
+  rel="stylesheet"
+/>
+
+<header id="header">
+  <h1>codeial</h1>
+
+  <ul>
+    <li>
+      <a href="/">Home</a>
+    </li>
+
+    <li>
+      <a href="/user/profile">Profile</a>
+    </li>
+
+    <li>
+      <% if(!locals.user) { %>
+      <p>
+        <a href="/user/sign-in">Login</a>/<a href="/user/sign-up">Sign Up</a>
+      </p>
+
+      <% } else { %>
+      <a href="/user/sign-out"> Sign Out</a>
+      <% } %>
+    </li>
+  </ul>
+</header>

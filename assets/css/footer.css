@@ -1,0 +1,12 @@
+footer {
+  height: 7rem;
+  display: flex;
+  align-items: center;
+}
+
+footer h1 {
+  width: 100%;
+  text-align: center;
+  font-size: 3rem;
+  color: white;
+}

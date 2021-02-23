@@ -1,7 +1,12 @@
-<h1>Welcome <%= user.name %></h1>
+<link rel="stylesheet" href="/css/profile.css" />
 
-<h3>Here Are ur Details</h3>
-<p>Name: <%= locals.user.name %></p>
-<p>Email: <%= locals.user.email %></p>
+<div id="background-image-container"></div>
+<div id="background-image-overlay"></div>
 
-<a href="/user/sign-out">Sign Out</a>
+<main>
+  <h1>Welcome <%= user.name %></h1>
+
+  <h3>Here Are ur Details</h3>
+  <p>Name: <%= locals.user.name %></p>
+  <p>Email: <%= locals.user.email %></p>
+</main>

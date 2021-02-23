@@ -1,0 +1,47 @@
+header {
+  position: sticky;
+  top: 0;
+  height: 7rem;
+  width: 100vw;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem 0 2rem;
+  background-image: linear-gradient(
+    to right,
+    rgba(207, 18, 207, 0.856),
+    rgba(226, 85, 226, 0.774)
+  );
+  z-index: 10;
+}
+
+header h1 {
+  font-size: 5rem;
+  font-family: "Akaya Telivigala", cursive;
+  color: white;
+}
+
+header ul {
+  list-style-type: none;
+  width: 50%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+header ul li {
+  font-size: 3rem;
+  font-weight: 900;
+  margin-right: 6rem;
+  color: white;
+}
+
+a {
+  text-decoration: none;
+  color: rgb(255, 255, 255);
+}
+
+a:hover {
+  color: rgb(160, 160, 160);
+}

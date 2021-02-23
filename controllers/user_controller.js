@@ -19,6 +19,7 @@ module.exports.signIn = function (req, res) {
   if (req.isAuthenticated()) {
     return res.redirect("/user/profile");
   }
+
   return res.render("sign-in", {
     title: "Codeial : Sign In",
   });
@@ -61,7 +62,7 @@ module.exports.create = function (req, res) {
           }
 
           // once user created redirect to sign in page
-
+          req.flash("success", "Account Created Successfully");
           return res.redirect("/user/sign-in");
         }
       );
@@ -71,6 +72,7 @@ module.exports.create = function (req, res) {
 
 // create session req action
 module.exports.createSession = function (req, res) {
+  req.flash("success", "Logged in Successfully");
   return res.redirect("/user/profile");
 };
 
@@ -83,7 +85,8 @@ module.exports.profile = function (req, res) {
 
 module.exports.signOut = function (req, res) {
   req.logout();
-  return res.redirect("/");
+  req.flash("success", "You Have Logged Out");
+  return res.redirect("/user/sign-in");
 };
 
 // ============================================================

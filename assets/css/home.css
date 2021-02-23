@@ -1,0 +1,129 @@
+body {
+  position: relative;
+
+  overflow-x: hidden;
+  box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.342);
+  z-index: 0;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+}
+
+main {
+  height: calc(100vh - 15rem);
+  overflow-y: scroll;
+  position: relative;
+  left: 50vw;
+  width: 100%;
+  max-width: 70rem;
+  border-radius: 2rem;
+  background-color: #fff;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  box-shadow: 0.3rem 0.3rem 1rem black;
+}
+
+#background-image-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-height: 100vh;
+  min-width: 100vw;
+  background-image: url("../images/home-background.jpg");
+  z-index: -1;
+}
+
+#background-image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-height: 100vh;
+  min-width: 100vw;
+  background-color: rgba(201, 191, 235, 0.925);
+  z-index: -1;
+}
+
+#create-post-form {
+  max-width: 50rem;
+  width: 100%;
+  margin: 3rem 0;
+}
+
+#create-post-form h2 {
+  font-size: 2.6rem;
+  margin-bottom: 10px;
+}
+
+#create-post-form form textarea {
+  width: 90%;
+  max-width: 50rem;
+  font-size: 2.5rem;
+  font-weight: 600;
+  padding: 1rem;
+}
+
+#create-post-form form input {
+  height: 3.7rem;
+  width: 12rem;
+  background: rgb(114, 3, 204);
+  color: white;
+  font-size: 1.6rem;
+  font-weight: 750;
+}
+
+#create-post-form form input:hover {
+  cursor: pointer;
+  transform: scale(1.01);
+}
+
+#posts-list-container {
+  max-width: 50rem;
+  width: 100%;
+}
+
+#posts-list-container h2 {
+  font-size: 2.6rem;
+  margin-bottom: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: white;
+}
+
+#posts-list-container ul {
+  list-style-type: none;
+}
+
+#posts-list-container ul li {
+  position: relative;
+}
+
+.post-list-item {
+  background-color: rgba(156, 213, 236, 0.541);
+  border-radius: 1rem;
+  padding: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+#posts-list-container ul li p {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+#comment-list-container {
+  position: relative;
+  left: 3rem;
+}
+
+#comment-list-container h3 {
+  font-size: 1.5rem;
+}
+
+#comment-list-container ul li p {
+  font-size: 1.6rem;
+}

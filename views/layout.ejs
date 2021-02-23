@@ -1,13 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.css"
+    />
+    <%- style %>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= title %></title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        font-size: 62.5%;
+      }
+    </style>
   </head>
   <body>
-    <%- include('_header') %> <%- body %> <%- include('_footer') %>
-    <br />
+    <%- include('_header') %>
+
+    <!-- ================================================== -->
+
+    <%- body %>
+
+    <!-- ================================================== -->
+
+    <%- include('_footer') %>
+
+    <!-- ================================================== -->
+
+    <%- script %>
+
+    <!-- ================================================== -->
+
+    <% if(flash.success && flash.success.length > 0) { %>
+    <script style="font-size: 5rem">
+      new Noty({
+        theme: "sunset", // theme is type of animation
+        text: "<%= flash.success %>", // the message to show in Notification
+        type: "success", // each type has a color theme (other types are warning, error etc)
+        layout: "topRight", // position where notification will appear
+        timeout: 1500, // time after which notification will go away
+      }).show();
+    </script>
+    <% } %>
   </body>
 </html>

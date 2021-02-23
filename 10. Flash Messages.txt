@@ -1,0 +1,152 @@
+Flash Messages :
+
+➡ Until now we just returned user to same page in case of an 
+error, this is not a good user experience. We must show user
+what is the error.
+
+➡ To start using flash messages, we first install a library 
+using npm install connect-flash.
+
+➡ Then we require it in our index.js as
+
+const flash = require("connect-flash");
+
+➡ Then we use it a middleware after passport.session, because
+this uses session cookies.
+
+app.use(flash());
+
+➡ This middleware adds a req.flash(), object in req object, 
+which will be used to pass on messages to show as flash.
+
+➡ Whenever returning a response before it we first set our 
+flash with a 1st arg as key and second as message.
+
+➡ But this will be available in only in req so we also need 
+to pass it into our res obj.
+
+➡ The syntax is as shown -
+
+req.flash('key', 'message'); (Ex - req.flash('success', 'Logged in Successfully'));
+
+// passing it into our res.
+
+res.locals.flash = {    |   res.render('someView', {flash: {success : req.flash('success')}})
+    key: 'value',       |
+    key: 'value',       |
+}                       |
+
+➡ Now unlike any other context that we pass into locals, this
+gets erased once used so that we don't get the message every 
+time we reach same controller.
+
+➡ For example once logged in it will only be available 1 time
+from then it won't be there any number of times we reload, 
+the next message will come only when we log out and re log in.
+
+➡ req.flash('key'); will return the message associated with 
+that key.
+
+===============================================================
+
+Custom setFlash Middleware :
+
+1. Passing flash message into res object for each action can be
+tedious so we will write a middleware that does this for us.
+
+2. Inside our config we will create a file called middleware.js
+
+3. Inside it we will write a setFlash function as - 
+
+module.exports.setFlash = function(req, res, next){
+  res.locals.flash = {
+      'success' : req.flash('success'),
+      'error' : req.flash('error'),
+  };
+
+  next();
+}
+
+4. Now we require this file in index.js and put middleware after
+flash().
+
+const customMwares = require('./config/middleware');
+
+app.use(customMwares.setFlash)
+
+5. Now we also need to include it in our Layout File.
+
+<% if(locals.flash.success && locals.flash.success.length > 0) { %>
+  <h5> <%= locals.flash.success %> </h5>
+<% } %>
+
+6. With our custom middleware flash message will be passed on 
+to res only if we use it before redirect. Because message is 
+created in controller and middleware is executed before controller
+so in redirect we will already have the message and hence middleware
+will be able to pass it to res.
+
+7. Although flash message are meant to be used with redirect.
+
+8. But if we want to create and send a flash before return render
+then we have to pass it manually in render context.
+
+Ex - 
+req.flash('error', 'Please Login');
+return res.render('sign-in', {flash: {error: req.flash('error')}})
+
+===============================================================
+
+Libraries to Implement Flash Messages -
+  a) express-flash-messages
+  b) connect-flash
+  c) Express-flash-2
+
+===============================================================
+
+NOTY Notification : 
+
+➡It is a js library. This is used to show flash messages in a 
+more fancy animated way. First we go to their website and either
+download or use cdn for css and js file and include it in our
+layout head.
+
+➡ Then we have to write js to use this as shown.
+
+new Noty({
+  theme: 'relax',  // theme is type of animation
+  text: '<%= flash.success %>', // the message to show in Notification
+  type: 'success',  // each type has a color theme (other types are warning, error etc)
+  layout: 'topRight', // position where notification will appear
+  timeout: 1500,  // time after which notification will go away
+}).show()
+
+➡ For now we will add this script in our layout at the end of 
+body.  And also wrap it around a conditional as - 
+
+<% if(flash.success && flash.success.length > 0) { %>
+
+  // NOTY CODE HERE
+
+<% } %>
+
+➡ For error we need to write another noty as - 
+
+<% if(flash.error && flash.error.length > 0) { %>
+
+  new Noty({
+
+  theme: 'relax',  // theme is type of animation
+  text: '<%= flash.error %>', // the message to show in Notification
+  type: 'error',  // each type has a color theme (other types are warning, error etc)
+  layout: 'topRight', // position where notification will appear
+  timeout: 1500,  // time after which notification will go away
+
+  }).show()
+
+<% } %>
+
+➡ An example of noty cdn is below -
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.css"/>

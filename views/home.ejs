@@ -1,38 +1,73 @@
-<h1 style="display: inline-block">Home</h1>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<h3 style="display: inline-block">
-  <a href="/user/sign-in">Login</a>/<a href="/user/sign-up">Sign Up</a>
-</h3>
-<p>
-  Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dignissimos eligendi
-  magnam nemo quaerat quis sequi voluptas alias aspernatur nulla, cupiditate
-  iusto ab quibusdam asperiores dolores. Rem adipisci nihil omnis ullam nisi
-  culpa eum? Praesentium velit nesciunt illum quasi quos accusantium,
-  consequuntur odit natus animi eos accusamus corporis non libero, aliquid sed
-  repudiandae illo expedita exercitationem ad sequi cupiditate! Quos minus
-  impedit, similique illo veritatis inventore explicabo mollitia id nihil
-  tempore praesentium quo dolorum dolor neque maxime provident aliquam. Iusto
-  enim deserunt consectetur ad magnam quia illum voluptatum eaque sapiente
-  aliquam est vero, totam in fugiat? Error iste repellat non nam, expedita ipsa
-  incidunt odit corporis aperiam mollitia fugit eum officiis neque cupiditate
-  maiores amet ipsam ea consequuntur? Nostrum maxime fugiat fuga ex sit unde nam
-  voluptas cupiditate, consequuntur, a laboriosam libero facere aut architecto?
-  Doloribus nam tenetur non rerum dolorum dolore, ipsum accusantium dicta
-  praesentium voluptatem neque, quas sunt quod dignissimos omnis odit velit. Ex,
-  tenetur. Blanditiis recusandae vero eius rerum adipisci at necessitatibus nam
-  distinctio delectus. Amet eos a odit non ab natus, vero itaque repellendus
-  assumenda aut animi quisquam incidunt expedita doloremque quia accusantium
-  dolor quas soluta. Laudantium rerum alias aspernatur earum adipisci eos
-  asperiores optio excepturi dolorum unde porro perferendis commodi fugiat,
-  iure, soluta blanditiis tenetur accusamus. Officia laudantium necessitatibus
-  ea aperiam dignissimos enim, quaerat eligendi repellat saepe quisquam quo a
-  exercitationem, possimus libero! Et, facere repudiandae? Debitis expedita
-  impedit, soluta nisi aut quo voluptatibus cumque voluptates vero nobis vel
-  molestias atque blanditiis obcaecati ipsam officia! Explicabo aliquam aliquid
-  ab porro similique, nobis accusantium veritatis minima earum assumenda itaque
-  deserunt sed repellendus repudiandae ducimus pariatur doloribus? Perspiciatis
-  incidunt vitae, rem eum accusantium hic laboriosam exercitationem id? Vero
-  consectetur tenetur fugiat voluptas ducimus soluta ullam, officia quisquam
-  officiis, tempore blanditiis aperiam aut, porro provident enim commodi modi
-  dignissimos.
-</p>
+<link rel="stylesheet" href="/css/home.css" />
+
+<div id="background-image-container"></div>
+<div id="background-image-overlay"></div>
+
+<main>
+  <!-- Post Form Below -->
+
+  <!-- Show post form if user logged in -->
+  <% if(locals.user) {%>
+  <div id="create-post-form">
+    <h2>Create A Post</h2>
+    <form action="/posts/create" method="POST">
+      <textarea
+        name="content"
+        cols="30"
+        rows="10"
+        placeholder="Type Here..."
+      ></textarea>
+      <input type="submit" value="Add Post" />
+    </form>
+  </div>
+  <%} %>
+
+  <!-- Post list container below -->
+
+  <div id="posts-list-container">
+    <h2>Posts By Our Users</h2>
+    <ul>
+      <% for(post of posts) { %>
+      <li class="post-list-item">
+        <!-- post content along with user name -->
+        <p>
+          ➡ <%= post.content %> :
+          <small> <%= post.user.name %> </small>
+        </p>
+        <!-- Each post will have a comment form of its own -->
+        <!-- this form is visible only to logged in user -->
+        <% if(locals.user) { %>
+        <form action="/comments/create" method="POST">
+          <input
+            type="text"
+            name="content"
+            placeholder="Type Comment Here..."
+          />
+          <!-- post id is sent in hidden way -->
+          <input type="hidden" name="post" value="<%= post._id %>" />
+          <input type="submit" value="Add Comment" />
+        </form>
+        <% } %>
+
+        <!-- Showing comments for this post -->
+        <div id="comment-list-container">
+          <h3>Comments</h3>
+          <ul id="post-comments-<%= post._id %> ">
+            <!-- for loop for looping over each comment -->
+
+            <% for(comment of post.comments) {%>
+            <li>
+              <p>
+                <%= comment.content %>
+                <small> <%= comment.user.name%> </small>
+              </p>
+            </li>
+            <% } %>
+          </ul>
+        </div>
+      </li>
+
+      <% } %>
+    </ul>
+  </div>
+</main>

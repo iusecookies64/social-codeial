@@ -1,18 +1,39 @@
-<h2>Sign Up</h2>
-<form action="/user/create" method="POST">
-  <input type="text" name="name" placeholder="Enter Name" /><br /><br />
-  <input type="email" name="email" placeholder="Enter Email" /><br /><br />
-  <input
-    type="password"
-    name="password"
-    placeholder="Enter Password"
-  /><br /><br />
-  <input
-    type="password"
-    name="confirm_password"
-    placeholder="Confirm Password"
-  /><br /><br />
-  <input type="Submit" />
-</form>
+<link rel="stylesheet" href="/css/sign_up_in.css" />
 
-<h4>Already have an account <a href="/user/sign-in">Sign In here</a></h4>
+<main>
+  <div class="form-content-side">
+    <h2>Lorem, ipsum dolor.</h2>
+    <br />
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laboriosam
+      aspernatur sint ipsam impedit labore ex ipsum eligendi repellat fugiat
+      ipsa ad quae voluptate assumenda suscipit aliquid vel soluta, deleniti
+      aliquam.
+    </p>
+  </div>
+
+  <div class="form" data-tilt>
+    <h2>Sign Up</h2>
+    <form action="/user/create" method="POST">
+      <input type="text" name="name" placeholder="Enter Name" /><br /><br />
+      <input type="email" name="email" placeholder="Enter Email" /><br /><br />
+      <input
+        type="password"
+        name="password"
+        placeholder="Enter Password"
+      /><br /><br />
+      <input
+        type="password"
+        name="confirm_password"
+        placeholder="Confirm Password"
+      /><br /><br />
+      <input type="Submit" id="submit-button" />
+    </form>
+
+    <h4>
+      <a href="/user/sign-in"> Already have an account ? <br />Sign In here</a>
+    </h4>
+  </div>
+</main>
+
+<script type="text/javascript" src="/js/vanilla-tilt.js"></script>

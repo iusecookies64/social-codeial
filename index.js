@@ -2,14 +2,21 @@ const express = require("express");
 const expressLayouts = require("express-ejs-layouts");
 const cookieParser = require("cookie-parser");
 const db = require("./config/mongoose");
+// const sassMiddleware = require("node-sass-middleware");
 
-// requiring authentication libraries
+// authentication libraries
 const passport = require("passport");
 const passportLocal = require("./config/passport-local-strategy");
 const session = require("express-session");
 
-// requiring connect-mongo
+// connect-mongo
 const MongoStore = require("connect-mongo")(session);
+
+// connect-flash
+const flash = require("connect-flash");
+
+// custom-middlewares
+const customMwares = require("./config/middlewares");
 
 // declaring port
 const port = 8000;
@@ -24,6 +31,18 @@ app.set("views", "./views");
 app.use(express.urlencoded());
 app.use(express.static("./assets"));
 app.use(cookieParser());
+
+// sass middleware
+
+// app.use(
+//   sassMiddleware({
+//     src: "./assets/scss", // from here scss will be extracted
+//     dest: "./assets/css", // here converted css will be posted
+//     debug: true, // show error in console (will be disabled in production mode)
+//     outputStyle: "extended", // clean multiLine css
+//     prefix: "/css", // prefix to be put while linking css in our views
+//   })
+// );
 
 // ejs layouts
 app.use(expressLayouts);
@@ -56,6 +75,10 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(passport.setAuthenticatedUser);
+
+// adding flash middleware
+app.use(flash());
+app.use(customMwares.setFlash);
 
 // setting up router below
 app.use("/", require("./routers/index"));
