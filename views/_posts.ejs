@@ -1,0 +1,44 @@
+<!-- Showing New Post Form Only if the user is logged in -->
+
+<% if(locals.user) {%>
+<div id="create-post-form">
+  <h2>Create A Post</h2>
+  <form action="/posts/create" method="POST">
+    <textarea name="content" cols="30" rows="10" placeholder="Type Here..."></textarea>
+    <input type="submit" value="Add Post" class="button" />
+  </form>
+</div>
+<%} %>
+
+<!-- post list container below -->
+
+<div id="posts-list-container">
+  <h2>Posts By Our Users</h2>
+  <ul>
+    <!-- for every post in db -->
+
+    <% for(post of posts) { %>
+    <li class="post-list-item">
+      <!-- post content along with user name -->
+
+      <div class="post-head">
+        <span> <%= post.user.name %> </span>
+
+        <!-- showing post delete button only if user and post creator are same -->
+
+        <% if(locals.user && locals.user.id == post.user.id) { %>
+
+        <span class="buttons">
+          <a href="/posts/destroy/<%= post.id %>">Delete</a>
+        </span>
+
+        <% } %>
+      </div>
+      <p><%= post.content %></p>
+      <hr />
+      <%- include('_comments') %>
+    </li>
+
+    <% } %>
+  </ul>
+</div>

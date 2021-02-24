@@ -51,5 +51,19 @@
       }).show();
     </script>
     <% } %>
+
+    <!-- ================================================== -->
+
+    <% if(flash.error && flash.error.length > 0) { %>
+    <script>
+      new Noty({
+        theme: "relax", // theme is type of animation
+        text: "<%= flash.error %>", // the message to show in Notification
+        type: "error", // each type has a color theme (other types are warning, error etc)
+        layout: "topRight", // position where notification will appear
+        timeout: 1500, // time after which notification will go away
+      }).show();
+    </script>
+    <% } %>
   </body>
 </html>

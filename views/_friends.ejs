@@ -1,0 +1,13 @@
+<section id="friends-section">
+  <h2>Friends List</h2>
+  <% if (locals.user) { %>
+  <ul>
+    <% for (u of all_users) { %>
+    <li>
+      <a href="/user/profile/<%= u.id %> "> <%= u.name %> </a>
+    </li>
+    <% } %>
+  </ul>
+
+  <% } %>
+</section>

@@ -36,3 +36,32 @@ module.exports.create = function (req, res) {
     }
   });
 };
+
+module.exports.destroy = function (req, res) {
+  // finding comment
+  Comments.findById(req.params.id, function (err, comment) {
+    // finding post related to comment
+    Post.findById(comment.post, function (err, post) {
+      // checking for authentication
+      if (comment.user == req.user.id || post.user == req.user.id) {
+        // storing post id to delete comment from later
+
+        let postId = post.id;
+
+        comment.remove();
+
+        Post.findByIdAndUpdate(
+          postId,
+          { $pull: { comments: req.params.id } },
+          function (err, post) {
+            req.flash("success", "Comment Deleted Successfully");
+            return res.redirect("/");
+          }
+        );
+      } else {
+        req.flash("error", "You Are Not Authorized");
+        return res.redirect("/");
+      }
+    });
+  });
+};

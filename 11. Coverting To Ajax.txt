@@ -1,0 +1,74 @@
+Converting To AJAX Using JQuery :
+
+1. First we include JQuery in our layout.ejs so that ll other
+pages will be able to use it. Below is jquery min cdn, we can
+also google jquery cdn to find other variants links.
+ 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" ></script>
+
+Note: this should be included in head and the js file in we 
+write jquery at end of body.
+
+2. We need to create a js file where we will take in the form
+data and submit and also receive the data sent by server and 
+then also show this on webpage.
+
+3. Lets convert post form and list into ajax, first we create 
+a js file named home_posts.js and include it in out home.ejs
+
+4. To accept send form data first we need to prevent default
+and then send form as ajax request. formEl.submit(), inside it
+we pass in a function that will get executed when we submit.
+
+===============================================================
+
+Sending AJAX Request :
+
+{
+    // using block scope and let/const to prevent conflict
+
+    // method to submit form data as ajax request
+    let createPost = function(){
+
+        let newPostForm = ${formSelector};
+
+        newPostForm.submit(function(e){
+            e.preventDefault();  // preventing default form submission
+
+            $.ajax({
+                type: 'post',  // req type
+                url: '/posts/create',  // action route
+                data: newPostForm.serialize(),  // serializing form data into json
+                success: function(data){
+                    // function to be executed on successful form submission 
+                    console.log(data);
+                },
+                error: function(error){
+                    // function to be executed on error in putting req
+                    console.log(error.responseText);
+                }
+            })
+        })
+    }
+
+
+    createPost();
+}
+
+5. Now we will go to our create post action and before returning
+res.redirect('back'), we will first send json.
+
+First we check if req was ajax or Not and then send json
+
+if(req.xhr){
+    
+    // returning from here and hence not executing res.redirect()
+
+    return res.status(200).json({
+        data: {
+            post: post, // value post must be either store in variable or used inside Post.create callback
+        },
+        message: "Post Created!"
+    })
+}
+

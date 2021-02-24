@@ -73,13 +73,18 @@ module.exports.create = function (req, res) {
 // create session req action
 module.exports.createSession = function (req, res) {
   req.flash("success", "Logged in Successfully");
-  return res.redirect("/user/profile");
+  return res.redirect("/");
 };
 
 // profile get req action
 module.exports.profile = function (req, res) {
-  return res.render("profile", {
-    title: "Codeial : User Profile",
+  User.findById(req.params.id, function (err, user) {
+    if (user) {
+      return res.render("profile", {
+        title: "Codeial : User Profile",
+        profile_user: user,
+      });
+    }
   });
 };
 

@@ -7,12 +7,13 @@ passport.use(
   new LocalStrategy(
     {
       usernameField: "email",
+      passReqToCallback: true,
     },
-    function (email, password, done) {
+    function (req, email, password, done) {
       // finding a user and establishing an identity
       User.findOne({ email: email }, function (err, user) {
         if (err) {
-          console.log("Error finding user --> Passport");
+          req.flash("error", err);
           return done(err);
         }
         // in case user is found
@@ -21,13 +22,13 @@ passport.use(
           if (user.password == password) {
             return done(null, user);
           } else {
-            console.log("wrong pass");
+            req.flash("error", "Invalid email/password");
             return done(null, false, { message: "Incorrect Password." });
           }
         }
         // if user not found
         else {
-          console.log("user not found");
+          req.flash("error", "Invalid email/password");
           return done(null, false, { message: "User Not Found." });
         }
       });
@@ -60,6 +61,7 @@ passport.checkAuthentication = function (req, res, next) {
     next();
   } else {
     // sending back request if user not signed-in
+    req.flash("error", "Please Login First");
     return res.redirect("/user/sign-in");
   }
 };
