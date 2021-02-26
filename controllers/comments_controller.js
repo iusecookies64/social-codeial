@@ -3,13 +3,11 @@ const Post = require("../models/posts");
 
 module.exports.create = function (req, res) {
   // checking if post exist
-
   Post.findById({ _id: req.body.post }, function (err, post) {
     if (err) {
       console.log("error finding post in comment", err);
       return res.redirect("/");
     }
-    //ok should i try reinstalling mongoose nope error in finding a post
     if (post) {
       // post is found we create comment
       Comments.create(
@@ -27,6 +25,14 @@ module.exports.create = function (req, res) {
           post.comments.push(comment);
           post.save();
 
+          if (req.xhr) {
+            return res.status(200).json({
+              data: {
+                comment: comment,
+              },
+              message: "Comment Created",
+            });
+          }
           return res.redirect("/");
         }
       );
@@ -54,6 +60,15 @@ module.exports.destroy = function (req, res) {
           postId,
           { $pull: { comments: req.params.id } },
           function (err, post) {
+            if (req.xhr) {
+              return res.status(200).json({
+                data: {
+                  comment_id: req.params.id,
+                },
+                message: "Comment Deleted",
+              });
+            }
+
             req.flash("success", "Comment Deleted Successfully");
             return res.redirect("/");
           }

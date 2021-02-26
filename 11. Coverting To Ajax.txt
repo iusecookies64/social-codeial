@@ -72,3 +72,485 @@ if(req.xhr){
     })
 }
 
+===============================================================
+
+Creating A Post (Receiving Data) :
+
+1.  So the basic idea here is that we need to add new post list 
+item to our posts list using javascript, and hence we need to 
+add similar li code as we have in view.
+
+Our li Code Below :
+
+<li class="post-list-item">
+    <!-- post content along with user name -->
+
+    <div class="post-head">
+    <span> <%= post.user.name %> </span>
+
+    <!-- showing post delete button only if user and post creator are same -->
+
+    <% if(locals.user && locals.user.id == post.user.id) { %>                                                           
+
+    <span class="buttons">
+        <a href="/posts/destroy/<%= post.id %>">Delete</a>
+    </span>
+
+    <% } %>
+    </div>
+    <p><%= post.content %></p>
+    <hr />
+    <%- include('_comments') %>
+</li>
+
+===============================================================
+
+The Code We Add Using Javascript :
+
+<li class="post-list-item" id="post-${post.id}">
+
+    <div class="post-head">
+        <span> ${post.user.name} </span>
+        <span class="buttons">
+            <a href="/posts/destroy/${post.id}" class="delete-post-button">Delete</a>
+        </span>
+    </div>
+    <p>${post.content}</p>
+    <hr />
+
+    <form action="/comments/create" method="POST" class="add-comment-form">
+        <input type="text" name="content" placeholder="Type Comment Here..." autocomplete="off" />
+        <input type="hidden" name="post" value="${post._id}" />
+        <button type="submit" class="button">Comment</button>
+    </form>
+
+    <div id="comment-list-container">
+
+        <h3>No Comments</h3>
+
+        <ul id="post-comments-${post._id}">
+        
+        </ul>
+    </div>
+</li>
+
+Explaining The Code :
+
+1. All the above code will be returned inside $(`above code here`), 
+to create a li DOM which will be appended or pre-pended to our 
+posts list. Entire code need to be passed as string and we will 
+use string template to add values dynamically, hence where ever 
+we have used <%=  %>, is replaced by ${}.
+
+2. We first add id attr to li and inside it we put post id, this
+is because later when we have to delete this post using ajax 
+this will help identifying the post.
+
+3. Then All authentication lines are removed since ejs won't 
+work here also this function will only be reached by a logged 
+in user only.
+
+4. All ejs need to be removed or replaced as we have done with
+value substitution (<%= %> to ${}).
+
+5. Also from comments we took add-comment-form and a empty ul
+since when post is created no comments are there.
+
+6. Basically All that we want to be there is put here without ejs.
+
+7. Now we need to create a function that will return this as A
+dom element.
+
+let newPost = function(post){
+    return $('all li code here')
+}
+
+8. Now we call this function in our createPost ajax success 
+function as shown
+
+success : function(data){
+    let newPost = newPostDom(data.data.post);   // data(our variable).data(json key).(inside data json key)
+    $("#posts-list-container>ul").prepend(newPost);  // pre-pending new li to our post list 
+}
+
+===============================================================
+
+Deleting A Post Using AJAX :
+
+1. First we need to select delete button DOM and prevent default
+on click event. Then on click we will send an ajax req to on the
+same link as that of the button href and on success, form server
+we will send the post id and here we remove this post from dom.
+
+let deletePost = function(deleteLink){
+    $(deleteLink).click(function(event){
+        event.preventDefault();
+
+        $.ajax({
+            type: 'get',
+            url: $(deleteLink).prop('href'),  // this a way to get href value in jquery
+            success: function(data){
+                $(`post-${data.post_id}`).remove();  // this is way to remove a dom element from page
+            },
+            error: function(error){
+                console.log(error.responseText)
+            }
+        })
+    })
+}
+
+2. Now we need to call this function for every post delete button
+in our post list container. So that each li item gets deleted
+using ajax. Also We need to call this for all newly created posts.
+
+Adding This To Newly Created Posts :
+
+success : function(data){
+    let newPost = newPostDom(data.data.post);   // data(our variable).data(json key).(inside data json key)
+    $("#posts-list-container>ul").prepend(newPost);  // pre-pending new li to our post list 
+    deletePost($(' .delete-post-button', newPost))  // calling deletePost on delete-post-button inside newPost.
+}
+
+===============================================================
+
+Adding deletePost to All Delete-Post-Buttons :
+
+let delPostButtons = document.querySelectorAll('.delete-post-button');
+
+for (let button of delPostButtons){
+    deletePost(button);
+}
+
+===============================================================
+
+Making Changes To On Server :
+
+1. In our post destroy function we will send json as res after
+deleting comments.
+
+if (req.xhr) {
+  return res.status(200).json({
+      data: {
+        post_id: req.params.id,
+      },
+      message: "Post Deleted",
+  });
+}
+
+===============================================================
+
+In our home controller when we populate Post we also can sort,
+to sort them in from latest to oldest we add .sort('-createdAt')
+to our Posts.find({}).sort('-createdAt').populate()....
+
+===============================================================
+
+Assignment : Convert Comments Creation/Deletion to AJAX. Also 
+add Noty notification to post/comment creation/deletion.
+
+===============================================================
+
+Assignment Solution :
+
+Noty Notification :
+
+➡ In the success/error functions of our post/comment creation/
+deletion we will add a new Noty just like how we did earlier
+
+new Noty({
+    theme: "relax", 
+    text: "Post Created",
+    type: "success",
+    layout: "topRight",
+    timeout: 1500,
+}).show();
+
+➡ We can wrap this around a function to make noty easy as
+
+let newNoty = function (text, status) {
+  new Noty({
+    theme: "relax",
+    text: `${text}`,
+    type: `${status}`,
+    layout: "topRight",
+    timeout: 1500,
+  }).show();
+};
+
+➡ Text and Status is taken as function input.
+
+===============================================================
+
+Comments AJAX :
+
+Note Instead of using for loop to add ajax to delete buttons we
+can use, 
+$('.delete-post-button').each(function(el){
+    deletePost(el);
+})
+
+Note to convert the form value after submission to empty string
+$("input:text", newCommentForm).val(""); // input type text
+$("textarea", newCommentForm).val("");
+
+===============================================================
+
+1. Creating Comment Form :
+
+let newComment = function (newCommentForm, commentList) {
+  newCommentForm.submit(function (e) {
+    e.preventDefault();
+    $.ajax({
+      type: "post",
+      url: "/comments/create",
+      data: newCommentForm.serialize(),
+      success: function (data) {
+        // call the function that create the comment dom
+        let newComment = newCommentDom(data.data.comment);
+        commentList.prepend(newComment); // pre-pending to current comment list container
+        deleteComment($(" .delete-comment-button", newComment));
+      },
+      error: function (error) {
+        console.log(error.responseText);
+      },
+    });
+  });
+};
+
+And On Controller :
+
+if (req.xhr) {
+  return res.status(200).json({
+    data: {
+      comment: comment,
+    },
+    message: "Comment Created",
+  });
+}
+
+===============================================================
+
+The newCommentDom :
+
+let newCommentDom = function (comment) {
+  return $(`
+    <li class="comment-${comment._id} comment">
+      <span>
+        <span> ${comment.user.name} </span>
+        <span>
+          <a href="/comments/destroy/${comment._id}" class="delete-comment-button">Delete</a>
+        </span>
+      </span>
+      <p>${comment.content}</p>
+    </li>
+      `);
+};
+
+===============================================================
+
+Deleting Comment :
+
+let deleteComment = function (deleteLink) {
+  $(deleteLink).click(function (e) {
+    e.preventDefault();
+
+    $.ajax({
+      type: "get",
+      url: $(deleteLink).prop("href"),
+      success: function (data) {
+        $(`.comment-${data.data.comment_id}`).remove();
+      },
+    });
+  });
+};
+
+Note : deleteLink that we are passing is actually anchor tag el
+and hence writing $(deleteLink).click() and deleteLink.click(),
+is same. But .prop only works with $(deleteLink) so its best to
+use $(element).
+
+===============================================================
+
+Overall My Code : not written in block and called before home_post.js
+in home.ejs so that all this is available in home_posts.js
+
+// function to change add-comment-form submission to AJAX
+
+let newNoty = function (text, status) {
+  new Noty({
+    theme: "relax",
+    text: `${text}`,
+    type: `${status}`,
+    layout: "topRight",
+    timeout: 1500,
+  }).show();
+};
+
+class PostComment {
+  constructor(postId) {
+    this.post = $(`post-${postId}`);
+    this.newCommentForm = $(`#comment-form-${postId}`);
+    this.commentList = $(`#post-${postId}-comments-list`); // comment container inside this.post
+    newComment(this.newCommentForm, this.commentList);
+    // converting all delete buttons to ajax
+    $(" .delete-comment-button", this.commentList).each(function () {
+      deleteComment();
+    });
+  }
+}
+
+let newComment = function (newCommentForm, commentList) {
+  newCommentForm.submit(function (e) {
+    e.preventDefault();
+    $.ajax({
+      type: "post",
+      url: "/comments/create",
+      data: newCommentForm.serialize(),
+      success: function (data) {
+        // call the function that create the comment dom
+        let newComment = newCommentDom(data.data.comment);
+        commentList.prepend(newComment); // pre-pending to current comment list container
+        deleteComment($(" .delete-comment-button", newComment));
+        newNoty("Comment Posted", "success");
+      },
+      error: function (error) {
+        console.log(error.responseText);
+      },
+    });
+  });
+};
+
+let newCommentDom = function (comment) {
+  return $(`
+    <li class="comment-${comment._id} comment">
+      <span>
+        <span> ${comment.user.name} </span>
+        <span>
+          <a href="/comments/destroy/${comment._id}" class="delete-comment-button">Delete</a>
+        </span>
+      </span>
+      <p>${comment.content}</p>
+    </li>
+      `);
+};
+
+let deleteComment = function (deleteLink) {
+  $(deleteLink).click(function (e) {
+    e.preventDefault();
+
+    $.ajax({
+      type: "get",
+      url: $(deleteLink).prop("href"),
+      success: function (data) {
+        $(`.comment-${data.data.comment_id}`).remove();
+        newNoty("Comment Deleted", "success");
+      },
+      error: function (error) {
+        console.log(error.responseText);
+      },
+    });
+  });
+};
+
+// converting all posts form and delete buttons to ajax
+let posts = $(".post-list-item");
+for (let post of posts) {
+  new PostComment($(post).prop("id").slice(5));
+}
+
+===============================================================
+
+Coding Ninjas Code : 
+
+class PostComments {
+  // constructor is used to initialize the instance of the class whenever a new instance is created
+  constructor(postId) {
+    this.postId = postId;
+    this.postContainer = $(`#post-${postId}`);
+    console.log(this.postContainer);
+    this.newCommentForm = $(`#post-${postId}-comments-form`);
+
+    this.createComment(postId);
+
+    let self = this;
+    // call for all the existing comments
+    $(" .delete-comment-button", this.postContainer).each(function () {
+      self.deleteComment($(this));
+    });
+  }
+
+  createComment(postId) {
+    let pSelf = this; // refers to instance of PostComments
+    this.newCommentForm.submit(function (e) {
+      e.preventDefault();
+      let self = this; // refers to newCommentForm
+
+      $.ajax({
+        type: "post",
+        url: "/comments/create",
+        data: $(self).serialize(),
+        success: function (data) {
+          let newComment = pSelf.newCommentDom(data.data.comment);
+          $(`#post-comments-${postId}`).prepend(newComment);
+          pSelf.deleteComment($(" .delete-comment-button", newComment));
+
+          new Noty({
+            theme: "relax",
+            text: "Comment published!",
+            type: "success",
+            layout: "topRight",
+            timeout: 1500,
+          }).show();
+        },
+        error: function (error) {
+          console.log(error.responseText);
+        },
+      });
+    });
+  }
+
+  newCommentDom(comment) {
+    // I've added a class 'delete-comment-button' to the delete comment link and also id to the comment's li
+    return $(`<li id="comment-${comment._id}">
+                        <p>
+
+                            <small>
+                                <a class="delete-comment-button" href="/comments/destroy/${comment._id}">X</a>
+                            </small>
+
+                            ${comment.content}
+                            <br>
+                            <small>
+                                ${comment.user.name}
+                            </small>
+                        </p>
+
+                </li>`);
+  }
+
+  deleteComment(deleteLink) {
+    $(deleteLink).click(function (e) {
+      e.preventDefault();
+
+      $.ajax({
+        type: "get",
+        url: $(deleteLink).prop("href"),
+        success: function (data) {
+          $(`#comment-${data.data.comment_id}`).remove();
+
+          new Noty({
+            theme: "relax",
+            text: "Comment Deleted",
+            type: "success",
+            layout: "topRight",
+            timeout: 1500,
+          }).show();
+        },
+        error: function (error) {
+          console.log(error.responseText);
+        },
+      });
+    });
+  }
+}
+

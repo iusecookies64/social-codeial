@@ -3,7 +3,7 @@
 <% if(locals.user) {%>
 <div id="create-post-form">
   <h2>Create A Post</h2>
-  <form action="/posts/create" method="POST">
+  <form action="/posts/create" method="POST" id="new-post-form">
     <textarea name="content" cols="30" rows="10" placeholder="Type Here..."></textarea>
     <input type="submit" value="Add Post" class="button" />
   </form>
@@ -18,7 +18,7 @@
     <!-- for every post in db -->
 
     <% for(post of posts) { %>
-    <li class="post-list-item">
+    <li class="post-list-item" id="post-<%= post._id %>">
       <!-- post content along with user name -->
 
       <div class="post-head">
@@ -29,7 +29,7 @@
         <% if(locals.user && locals.user.id == post.user.id) { %>
 
         <span class="buttons">
-          <a href="/posts/destroy/<%= post.id %>">Delete</a>
+          <a href="/posts/destroy/<%= post._id %>" class="delete-post-button">Delete</a>
         </span>
 
         <% } %>

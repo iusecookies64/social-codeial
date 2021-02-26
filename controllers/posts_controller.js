@@ -1,54 +1,55 @@
 const Post = require("../models/posts");
 const Comments = require("../models/comments");
+const Users = require("../models/user");
 
-module.exports.create = function (req, res) {
+module.exports.create = async function (req, res) {
   // creating post after authentication
-  Post.create(
-    {
-      content: req.body.content,
-      user: req.user._id,
-    },
-    function (err, post) {
-      if (err) {
-        console.log("error creating post");
-        return;
-      }
+  let post = await Post.create({
+    content: req.body.content,
+    user: req.user._id,
+  });
 
-      return res.redirect("/");
-    }
-  );
+  // let user = await Users.findById(post.user);
+  // sending post as json if req is XMLHttpRequest
+  if (req.xhr) {
+    return res.status(200).json({
+      data: {
+        post: post,
+      },
+      message: "Post Created",
+    });
+  }
 };
 
-module.exports.destroy = function (req, res) {
-  // finding the post
-  Post.findById(req.params.id, function (err, post) {
+module.exports.destroy = async function (req, res) {
+  try {
+    // finding the post
+    let post = await Post.findById(req.params.id);
     // if such post exist
     if (post) {
       // checking if user authorized to delete
       if (post.user == req.user.id) {
         // saving post id to be used later in deleting comments
         let postId = post.id;
-
         post.remove();
 
         // deleting Comments
-        Comments.deleteMany({ post: postId }, function (err) {
-          if (err) {
-            req.flash("error", "Error in Deleting Comments");
-            return res.redirect("back");
-          }
+        await Comments.deleteMany({ post: postId });
+        // returning back with success flash message
 
-          // returning back with success flash message
-          req.flash("success", "Post Deleted!");
-          return res.redirect("back");
-        });
+        if (req.xhr) {
+          return res.status(200).json({
+            data: {
+              post_id: req.params.id,
+            },
+            message: "Post Deleted",
+          });
+        }
       }
     }
-    // if post don't exist
-    else {
-      // returning back with error flash message
-      req.flash("error", "Error Deleting Post!");
-      return res.redirect("back");
-    }
-  });
+    return res.redirect("back");
+  } catch (error) {
+    req.flash("error", "Error Deleting Post");
+    return res.redirect("/");
+  }
 };

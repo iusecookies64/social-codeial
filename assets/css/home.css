@@ -139,12 +139,12 @@ main {
   padding-left: 1rem;
 }
 
-#comment-list-container {
+.comment-list-container {
   position: relative;
   left: 1.5rem;
 }
 
-#comment-list-container h3 {
+.comment-list-container h3 {
   font-size: 2.1rem;
 }
 

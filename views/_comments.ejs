@@ -1,7 +1,12 @@
 <!-- create comment form -->
 
 <% if(locals.user) { %>
-<form action="/comments/create" method="POST" class="add-comment-form">
+<form
+  action="/comments/create"
+  method="POST"
+  class="add-comment-form"
+  id="comment-form-<%= post._id %>"
+>
   <input type="text" name="content" placeholder="Type Comment Here..." autocomplete="off" />
   <!-- post id is sent in hidden way -->
   <input type="hidden" name="post" value="<%= post._id %>" />
@@ -9,21 +14,21 @@
 </form>
 <% } %>
 
-<div id="comment-list-container">
+<div class="comment-list-container" id="post-<%= post._id %>-comments-container">
   <!-- if comments are there the show comments or show no comments -->
 
   <% if(post.comments.length > 0 ) { %>
-  <h3>Comments</h3>
+  <h3 class="comment-heading">Comments</h3>
   <% } else { %>
-  <h3>No Comments</h3>
+  <h3 class="comment-heading">No Comments</h3>
   <% } %>
 
   <!-- comments List below -->
-  <ul id="post-comments-<%= post._id %> ">
+  <ul id="post-<%= post._id %>-comments-list">
     <!-- for loop for looping over each comment -->
 
     <% for(comment of post.comments) {%>
-    <li class="comment">
+    <li class="comment-<%= comment._id %> comment">
       <span>
         <span> <%= comment.user.name %> </span>
 
@@ -32,7 +37,7 @@
         <!-- checking for authorization -->
         <% if(comment.user.id == locals.user.id || post.user.id == locals.user.id) { %>
         <span>
-          <a href="/comments/destroy/<%= comment.id %>">Delete</a>
+          <a href="/comments/destroy/<%= comment._id %>" class="delete-comment-button">Delete</a>
         </span>
 
         <% } %> <% } %>
