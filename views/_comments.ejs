@@ -17,17 +17,13 @@
 <div class="comment-list-container" id="post-<%= post._id %>-comments-container">
   <!-- if comments are there the show comments or show no comments -->
 
-  <% if(post.comments.length > 0 ) { %>
   <h3 class="comment-heading">Comments</h3>
-  <% } else { %>
-  <h3 class="comment-heading">No Comments</h3>
-  <% } %>
 
   <!-- comments List below -->
   <ul id="post-<%= post._id %>-comments-list">
     <!-- for loop for looping over each comment -->
 
-    <% for(comment of post.comments) {%>
+    <% for(comment of post.comments.reverse()) {%>
     <li class="comment-<%= comment._id %> comment">
       <span>
         <span> <%= comment.user.name %> </span>

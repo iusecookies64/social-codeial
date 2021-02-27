@@ -6,7 +6,19 @@
 <main>
   <h1>Welcome <%= user.name %></h1>
 
+  <% if(locals.user.id == profile_user.id) { %>
+  <h3>Update Your Profile</h3>
+  <form action="/user/update" method="POST">
+    <input type="text" name="name" placeholder="Enter Name" value="<%= profile_user.name %>" />
+    <input type="email" name="email" placeholder="Enter Email" value="<%= profile_user.email %>" />
+    <input type="hidden" name="id" value="<%= profile_user._id %>" />
+    <button type="submit">Update Profile</button>
+  </form>
+
+  <% } else { %>
   <h3>Here Are <%= profile_user.name %>'s Details</h3>
   <p>Name: <%= profile_user.name %></p>
   <p>Email: <%= profile_user.email %></p>
+
+  <% } %>
 </main>

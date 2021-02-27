@@ -14,7 +14,7 @@
         success: function (data) {
           // function to be executed on successful form submission first arg is data sent by server
           //   calling the newPostDom function and storing returned DOM li object in newPost
-          let newPost = newPostDom(data.data.post);
+          let newPost = newPostDom(data.data.post, data.data.post_user);
           $("#posts-list-container>ul").prepend(newPost);
           deletePost($(" .delete-post-button", newPost));
           new PostComment(data.data.post._id);
@@ -31,12 +31,12 @@
   };
 
   //  method to create post dom
-  let newPostDom = function (post) {
+  let newPostDom = function (post, user) {
     return $(`
 <li class="post-list-item" id="post-${post._id}">
 
     <div class="post-head">
-        <span> ${post.user.name} </span>
+        <span> ${currentUser} </span>
         <span class="buttons">
             <a href="/posts/destroy/${post._id}" class="delete-post-button">Delete</a>
         </span>
@@ -52,7 +52,7 @@
 
     <div class="comment-list-container">
 
-        <h3 class="comment-heading">No Comments</h3>
+        <h3 class="comment-heading">Comments</h3>
 
         <ul id="post-${post._id}-comments-list">
     

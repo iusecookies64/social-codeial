@@ -1,5 +1,7 @@
 // function to change add-comment-form submission to AJAX
 
+let currentUser = document.querySelector("#loggedInUserData").getAttribute("data-user");
+
 let newNoty = function (text, status) {
   new Noty({
     theme: "relax",
@@ -51,7 +53,7 @@ let newCommentDom = function (comment) {
   return $(`
     <li class="comment-${comment._id} comment">
       <span>
-        <span> ${comment.user.name} </span>
+        <span> ${currentUser} </span>
         <span>
           <a href="/comments/destroy/${comment._id}" class="delete-comment-button">Delete</a>
         </span>

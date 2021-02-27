@@ -1,0 +1,10 @@
+If we want some information from locals(which is available in 
+template engine) in our script file then we cana do following.
+
+1. Create a html element and use data attr to store value desired
+
+Example -
+<span style="display: hidden" data-user="<%= locals.user.name %>" id="loggedInUserData"></span>
+
+2. Now in our js file we can access this element and get the 
+attr value. 

@@ -1,6 +1,5 @@
 const Post = require("../models/posts");
 const Comments = require("../models/comments");
-const Users = require("../models/user");
 
 module.exports.create = async function (req, res) {
   // creating post after authentication

@@ -21,6 +21,9 @@
       }
     </style>
   </head>
+  <% if(locals.user) { %>
+  <span style="display: hidden" data-user="<%= locals.user.name %>" id="loggedInUserData"></span>
+  <% } %>
   <body>
     <%- include('_header') %>
 

@@ -94,6 +94,26 @@ module.exports.signOut = function (req, res) {
   return res.redirect("/user/sign-in");
 };
 
+module.exports.update = function (req, res) {
+  // checking if user authorized to update
+  if (req.user.id == req.body.id) {
+    // finding the user and updating
+    User.findByIdAndUpdate(
+      req.body.id,
+      { name: req.body.name, email: req.body.email },
+      function (err, user) {
+        if (err) {
+          req.flash("error", "Error Updating");
+          console.log(err);
+        } else {
+          req.flash("success", "Profile Updated");
+        }
+        return res.redirect("back");
+      }
+    );
+  }
+};
+
 // ============================================================
 
 // // processing sign in form post request

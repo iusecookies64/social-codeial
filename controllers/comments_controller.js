@@ -1,46 +1,33 @@
 const Comments = require("../models/comments");
 const Post = require("../models/posts");
 
-module.exports.create = function (req, res) {
+module.exports.create = async function (req, res) {
   // checking if post exist
-  Post.findById({ _id: req.body.post }, function (err, post) {
-    if (err) {
-      console.log("error finding post in comment", err);
-      return res.redirect("/");
-    }
-    if (post) {
-      // post is found we create comment
-      Comments.create(
-        {
-          content: req.body.content,
-          user: req.user._id,
-          post: req.body.post,
+  let post = await Post.findById({ _id: req.body.post });
+  if (post) {
+    // post is found we create comment
+    let comment = await Comments.create({
+      content: req.body.content,
+      user: req.user._id,
+      post: req.body.post,
+    });
+
+    post.comments.push(comment);
+    post.save();
+
+    if (req.xhr) {
+      return res.status(200).json({
+        data: {
+          comment: comment,
         },
-        function (err, comment) {
-          if (err) {
-            console.log("error creating comment ");
-            return;
-          }
-
-          post.comments.push(comment);
-          post.save();
-
-          if (req.xhr) {
-            return res.status(200).json({
-              data: {
-                comment: comment,
-              },
-              message: "Comment Created",
-            });
-          }
-          return res.redirect("/");
-        }
-      );
-    } else {
-      console.log("Post Not Found");
-      return res.redirect("/");
+        message: "Comment Created",
+      });
     }
-  });
+    return res.redirect("/");
+  } else {
+    console.log("Post Not Found");
+    return res.redirect("/");
+  }
 };
 
 module.exports.destroy = function (req, res) {
