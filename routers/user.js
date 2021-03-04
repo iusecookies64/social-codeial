@@ -27,5 +27,5 @@ router.post(
 router.get("/sign-out", userController.signOut);
 
 // update user info
-router.post("/update", passport.checkAuthentication, userController.update);
+router.post("/update/:id", passport.checkAuthentication, userController.update);
 module.exports = router;

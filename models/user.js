@@ -1,4 +1,7 @@
 const mongoose = require("mongoose");
+const multer = require("multer");
+const path = require("path");
+const AVATAR_PATH = path.join("/uploads/user/avatar");
 
 const userSchema = mongoose.Schema(
   {
@@ -15,11 +18,27 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    avatar: {
+      type: String,
+    },
   },
   {
     timestamp: true,
   }
 );
+// no image
+//can i call you ? yeah  8500317490
+let storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, "..", AVATAR_PATH));
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + "-" + Date.now());
+  },
+});
+
+userSchema.statics.uploadedAvatar = multer({ storage: storage }).single("avatar");
+userSchema.statics.avatarPath = AVATAR_PATH;
 
 const User = mongoose.model("User", userSchema);
 

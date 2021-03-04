@@ -7,11 +7,16 @@
   <h1>Welcome <%= user.name %></h1>
 
   <% if(locals.user.id == profile_user.id) { %>
+  <!-- ======================== -->
+  <% if (user.avatar) { %>
+  <img src="<%= user.avatar %> " alt="<%= user.name %> " width="200px" style="border-radius: 50%" />
+  <% } %>
   <h3>Update Your Profile</h3>
-  <form action="/user/update" method="POST">
+  <form action="/user/update/<%= user._id %>" method="POST" enctype="multipart/form-data">
     <input type="text" name="name" placeholder="Enter Name" value="<%= profile_user.name %>" />
     <input type="email" name="email" placeholder="Enter Email" value="<%= profile_user.email %>" />
-    <input type="hidden" name="id" value="<%= profile_user._id %>" />
+    <input type="file" name="avatar" id="imgInpt" onchange="loadFile(event)" />
+    <img id="image_preview" src="#" alt="Profile Picture" width="300px" />
     <button type="submit">Update Profile</button>
   </form>
 
@@ -22,3 +27,4 @@
 
   <% } %>
 </main>
+<script src="/js/picture_preview.js"></script>

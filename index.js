@@ -80,6 +80,9 @@ app.use(passport.setAuthenticatedUser);
 app.use(flash());
 app.use(customMwares.setFlash);
 
+// setting up uploads directory for public use
+app.use("/uploads", express.static("uploads"));
+
 // setting up router below
 app.use("/", require("./routers/index"));
 

@@ -1,5 +1,7 @@
 // requiring user schema
 const User = require("../models/user");
+const fs = require("fs");
+const path = require("path");
 
 // rendering sign up page
 module.exports.signUp = function (req, res) {
@@ -28,46 +30,34 @@ module.exports.signIn = function (req, res) {
 // ============================================================
 
 // processing sign up data
-module.exports.create = function (req, res) {
+module.exports.create = async function (req, res) {
   // checking if password and confirm password is same
   if (req.body.password != req.body.confirm_password) {
     return res.redirect("/user/sign-up");
   }
-  // checking if email is unique
-
-  User.findOne({ email: req.body.email }, function (err, user) {
-    if (err) {
-      console.log("error finding user in sign up");
-      return;
-    }
+  try {
+    // checking if email is unique
+    let user = await User.findOne({ email: req.body.email });
 
     // if user found return back to sign up page
-
     if (user) {
       return res.redirect("/user/sign-up");
     }
 
     // if user not found we create user
-    else {
-      User.create(
-        {
-          name: req.body.name,
-          email: req.body.email,
-          password: req.body.password,
-        },
-        function (err, user) {
-          if (err) {
-            console.log("error creating user while signing-up");
-            return res.redirect("/user/sign-up");
-          }
+    user = await User.create({
+      name: req.body.name,
+      email: req.body.email,
+      password: req.body.password,
+    });
 
-          // once user created redirect to sign in page
-          req.flash("success", "Account Created Successfully");
-          return res.redirect("/user/sign-in");
-        }
-      );
-    }
-  });
+    // once user created redirect to sign in page
+    req.flash("success", "Account Created Successfully");
+    return res.redirect("/user/sign-in");
+  } catch (error) {
+    req.flash("error", "Error Creating User!");
+    return res.redirect("back");
+  }
 };
 
 // create session req action
@@ -94,23 +84,37 @@ module.exports.signOut = function (req, res) {
   return res.redirect("/user/sign-in");
 };
 
-module.exports.update = function (req, res) {
+module.exports.update = async function (req, res) {
   // checking if user authorized to update
-  if (req.user.id == req.body.id) {
-    // finding the user and updating
-    User.findByIdAndUpdate(
-      req.body.id,
-      { name: req.body.name, email: req.body.email },
-      function (err, user) {
-        if (err) {
-          req.flash("error", "Error Updating");
-          console.log(err);
-        } else {
-          req.flash("success", "Profile Updated");
+  if (req.user.id == req.params.id) {
+    try {
+      let user = await User.findById(req.params.id);
+      User.uploadedAvatar(req, res, function (err) {
+        // updating the user
+        user.name = req.body.name;
+        user.email = req.body.email;
+
+        // updating profile pic only if user has uploaded
+        if (req.file) {
+          if (user.avatar) {
+            let filePath = path.join(__dirname, "..", user.avatar);
+            if (fs.existsSync(filePath)) {
+              fs.unlinkSync(filePath);
+            }
+          }
+          user.avatar = User.avatarPath + "/" + req.file.filename;
         }
+
+        user.save();
         return res.redirect("back");
-      }
-    );
+      });
+    } catch (error) {
+      console.log(err);
+      return res.redirect("back");
+    }
+  } else {
+    req.flash("error", "Not Authorized!");
+    return res.redirect("back");
   }
 };
 
